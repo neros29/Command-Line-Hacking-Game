@@ -37,8 +37,7 @@ class TestFileSystem(unittest.TestCase):
         
         # Check required metadata
         self.assertIn("name", meta)
-        self.assertIn("username", meta)
-        self.assertIn("password", meta)
+        self.assertIn("users", meta)  # Changed from "username" to "users"
         self.assertIn("ip", meta)
 
 if __name__ == '__main__':

@@ -15,18 +15,26 @@ import test_commands
 import test_filesystem
 import test_environment
 import test_integration
-import test_pipe_functionality  # Import the pipe functionality tests
+import test_pipe_functionality
+import test_commands_comprehensive
+import test_password_manager
+import test_user_management
 
 def run_all_tests():
     # Create a test suite combining all test cases
     test_suite = unittest.TestSuite()
     
-    # Add test cases from each module
+    # Add original test cases
     test_suite.addTest(unittest.makeSuite(test_commands.TestCommands))
     test_suite.addTest(unittest.makeSuite(test_filesystem.TestFileSystem))
     test_suite.addTest(unittest.makeSuite(test_environment.TestEnvironment))
     test_suite.addTest(unittest.makeSuite(test_integration.TestIntegration))
-    test_suite.addTest(unittest.makeSuite(test_pipe_functionality.TestPipeFunctionality))  # Add pipe tests
+    test_suite.addTest(unittest.makeSuite(test_pipe_functionality.TestPipeFunctionality))
+    
+    # Add new comprehensive tests
+    test_suite.addTest(unittest.makeSuite(test_commands_comprehensive.TestCommandsComprehensive))
+    test_suite.addTest(unittest.makeSuite(test_password_manager.TestPasswordManager))
+    test_suite.addTest(unittest.makeSuite(test_user_management.TestUserManagement))
     
     # Run the tests
     runner = unittest.TextTestRunner(verbosity=2)

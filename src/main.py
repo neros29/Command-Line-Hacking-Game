@@ -2,19 +2,17 @@ import os
 import json
 import time
 import sys
-import inspect
 from colorama import init, Fore, Style
 import random
-from utils.utils import * # Import utility functions
 from utils.logger import Logger
 import importlib
 import platform
 import getpass
-import subprocess
 import shlex
 import io
-from contextlib import redirect_stdout
+from utils.utils import load_machine, save_machine
 from utils.password_manager import verify_password, hash_password
+from utils.file_utils import check_file_access,  resolve_path
 import argparse
 
 # Ensure that the src directory is in the Python path
@@ -30,6 +28,10 @@ for filename in os.listdir(commands_dir):
         modules[module_name] = importlib.import_module(f'src.commands.{module_name}')
 
 init(autoreset=True)
+
+
+restart = False
+
 
 def parse_arguments():
     """Parse command line arguments for the Terminal Hacking Game."""
@@ -62,8 +64,11 @@ class HackingEnvironment:
         self.logger = Logger(self.current_machine_name)
         self.logger.log_system("SYSTEM_STARTUP", "Terminal hacking environment initialized")
 
+        # Register environment in global modules dictionary for command access
+        modules["__env__"] = self
+        
         # Initialize the hacking environment
-        # self.start_up()
+        self.start_up()
         # self.login()
         self.commands_list = []
         self.get_commands()
@@ -81,12 +86,9 @@ class HackingEnvironment:
 
     def login(self):
         """Authenticate the user before allowing access to the system."""
-        max_attempts = 5
-        attempts = 0
-        
         # Get users from machine data
         users = self.meta_data.get("users", {})
-        
+
         # If no users defined, create a default root user
         if not users:
             default_password = "password"  # Default password for new installations
@@ -108,47 +110,39 @@ class HackingEnvironment:
             
             print(Fore.YELLOW + f"Created default root user with password: {default_password}")
             print(Fore.YELLOW + "Please change this password immediately using 'passwd'")
-        
+
         print(Fore.YELLOW + f"\nLogin to {self.meta_data['name']}...")
         
-        while attempts < max_attempts:
-            attempts += 1
-            
-            # First ask for username
-            username = input(f"Username ({attempts}/{max_attempts}): ")
-            
-            # Then ask for password
-            password = getpass.getpass(prompt="Password: ")
-            
-            # Check if user exists
-            if username in users:
-                user_data = users[username]
-                user_password = user_data.get("password")
-                
-                # Verify password
-                if verify_password(password, user_password):
+        while True:
+            # Infinite tries for a valid username
+            username = input("username: ")
+            if username not in users:
+                print(Fore.RED + f"User '{username}' not found. Try again.")
+                continue
+
+            # Once a valid username is provided, allow five attempts for password
+            max_attempts = 5
+            for attempt in range(1, max_attempts + 1):
+                password = getpass.getpass(prompt="Password: ")
+                if verify_password(password, users[username]["password"]):
                     print(Fore.GREEN + "Login successful.")
-                    
                     # Set current user and permissions
                     self.current_user = username
+                    user_data = users[username]
                     self.is_root = user_data.get("is_root", False)
                     self.user_home = user_data.get("home", f"/home/{username}")
                     self.user_permissions = user_data.get("permissions", [])
                     
-                    # If logging in for the first time, start in user's home directory
                     if self.pwd == "/home" and self.user_home:
                         self.pwd = self.user_home
                     
-                    # Log the successful login
                     self.logger.log_login(username, success=True)
                     return True
+                else:
+                    print(Fore.RED + f"Authentication failed. Attempt {attempt}/{max_attempts}.")
+                    self.logger.log_login(username, success=False)
             
-            print(Fore.RED + "Authentication failed.")
-            # Log the failed login attempt
-            self.logger.log_login(username, success=False)
-        
-        print(Fore.RED + f"Maximum login attempts exceeded. System access denied.")
-        return False
+            print(Fore.RED + f"Maximum password attempts exceeded for {username}. Try a different username.")
     
     def get_commands(self):
         """Create a list of all the commands"""
@@ -162,6 +156,10 @@ class HackingEnvironment:
         pipe_env_vars = ["PIPED_INPUT", "IS_PIPED", "IS_PIPE_SOURCE"]
         for var in pipe_env_vars:
             original_env[var] = os.environ.get(var)
+        
+        # IMPORTANT: Make sure __env__ is always available to commands
+        # This ensures it's properly set before any command execution
+        modules["__env__"] = self
         
         try:
             if command_string.strip() == "":
@@ -214,6 +212,10 @@ class HackingEnvironment:
                         # Redirect stdout to our buffer
                         sys.stdout = buffer
                         
+                        # Clear buffer before executing command
+                        buffer.truncate(0)
+                        buffer.seek(0)
+                        
                         # Parse the command
                         try:
                             args = shlex.split(cmd)
@@ -243,14 +245,17 @@ class HackingEnvironment:
                             
                             # Normalize path if provided
                             if target_path:
-                                if not target_path.startswith("/"):
-                                    target_path = os.path.normpath(os.path.join(self.pwd, target_path))
+                                path_parts = resolve_path(target_path, self.pwd, self.file_system)
                             
                             # Check permissions if we have a target path
-                            if target_path and not check_file_access(target_path, self.current_user, self.is_root):
-                                print(Fore.RED + f"Permission denied: '{self.current_user}' cannot access '{target_path}'")
-                                self.logger.log_command(self.current_user, command, self.pwd, False)
-                                return
+                            if target_path:
+                                # First resolve the path to get path_parts
+                                path_parts = resolve_path(target_path, self.pwd, self.file_system)
+                                # Then check file access with correct parameter order
+                                if not check_file_access(self.file_system, path_parts, self.current_user):
+                                    print(Fore.RED + f"Permission denied: '{self.current_user}' cannot access '{target_path}'")
+                                    self.logger.log_command(self.current_user, command_string, self.pwd, False)
+                                    return
 
                         # Execute the command
                         if command in self.commands_list:
@@ -262,7 +267,8 @@ class HackingEnvironment:
                             # Reload the file system if needed
                             file_modifying_commands = ["nano", "rm", "mkdir", "touch", "mv"]
                             if command in file_modifying_commands:
-                                self.file_system = load_machine(self.current_machine_name)
+                                self.current_machine = load_machine(self.current_machine_name)
+                                self.file_system = self.current_machine["file_system"]
                             
                             module = modules[command]
                             if hasattr(module, 'execute'):
@@ -271,10 +277,8 @@ class HackingEnvironment:
                                 self.pwd = module.execute(args[1:], self.pwd, self.current_machine_name)
                             else:
                                 print(Fore.RED + f"Command {command} not found")
-                                self.logger.log_command(self.current_user, command_string, self.pwd, False)
                         else:
                             print(Fore.RED + f"\"{command}\" is not recognized")
-                            self.logger.log_command(self.current_user, command_string, self.pwd, False)
                         
                         # Get the output from this command
                         output = buffer.getvalue()
@@ -334,15 +338,15 @@ class HackingEnvironment:
                         target_path = args[-1]  # Destination
                     
                     # Normalize path if provided
-                    if target_path and not target_path.startswith("/"):
-                        target_path = os.path.normpath(os.path.join(self.pwd, target_path))
+                    if target_path:
+                        path_parts = resolve_path(target_path, self.pwd, self.file_system)
                     
                     # Get current user data
                     users = self.meta_data.get("users", {})
                     user_data = users.get(self.current_user, {})
                     
                     # Check permissions if we have a target path
-                    if target_path and not check_file_access(target_path, self.current_user, user_data, self):
+                    if target_path and not check_file_access(self.file_system, path_parts, self.current_user):
                         print(Fore.RED + f"Permission denied: '{self.current_user}' cannot access '{target_path}'")
                         self.logger.log_command(self.current_user, command_string, self.pwd, False)
                         return
@@ -377,7 +381,7 @@ class HackingEnvironment:
                     return
                 else:
                     print(Fore.RED + f"\"{command}\" is not recognized as an internal or external command,\noperable program or batch file.")
-                    self.logger.log_command(self.current_user, command_string, self.pwd, False)
+                    self.logger.log_command(self.current_user, command, self.pwd, False)
         
         finally:
             # Clean up - restore original environment state
@@ -405,11 +409,15 @@ class HackingEnvironment:
             for command in self.commands_list:
                 spaces = 15 - len(command)
                 print(f"{command}{' ' * spaces}", end="")
-                module = modules[command.strip()]
-                if hasattr(module, 'help'):
-                    module.help()
+                if command in modules:  # Check if command exists in modules
+                    module = modules[command.strip()]
+                    if hasattr(module, 'help'):
+                        module.help()
+                    else:
+                        print(Fore.RED + "No help available")
                 else:
-                    print(Fore.RED + "No help available")
+                    print(Fore.RED + f"Module not found for {command}")
+                    
             print("\nFor more information on tools see the command-line reference in the online help.")
 
     def start_up(self):
@@ -532,52 +540,63 @@ class HackingEnvironment:
         ]
 
         for line in banner:
-            typing_effect(Fore.RED + line, delay=0.02)
+            typing_effect(Fore.RED + line, delay=0.01)
 
         print(Fore.YELLOW + "\n> Accessing mainframe...")
         time.sleep(1)
-        typing_effect(Fore.GREEN + "> Connection Established.")
-        typing_effect(Fore.GREEN + "> Welcome to the system, Operative.")
+        typing_effect(Fore.GREEN + "> Connection Established.", delay=.03)
+        typing_effect(Fore.GREEN + "> Welcome to the system, Operative.", delay=.03)
 
         # Log completion of startup
         self.logger.log_system("BOOT_SEQUENCE_COMPLETE", "System boot completed successfully")
 
     def run(self):
         """Improved command loop with better handling for commands with arguments."""
-        # Log the start of the game session - FIXED to use current_user instead of meta_data['username']
         self.logger.log_system("SESSION_START", f"User {self.current_user} started a new terminal session")
+        modules["__env__"] = self
         
         while True:
             try:
-                # Update prompt to use current_user instead of meta_data['username']
                 command = input(Fore.BLUE + f"{self.current_user}@{self.meta_data['ip']}:{self.pwd}$ ")
-                
                 if command.strip() == "":
                     continue
                     
-                # Parse the command properly
+                modules["__env__"] = self
+                    
                 try:
                     args = shlex.split(command)
                     cmd = args[0] if args else ""
                 except ValueError:
-                    # Fall back to simple split if shlex fails
                     args = command.split()
                     cmd = args[0] if args else ""
                     
-                # Handle built-in commands
-                if cmd == "exit":
-                    # Updated to use current_user
+                if cmd == "shutdown":
+                    global restart  # Declare global to update the restart flag
+                    # Check if "-r" is passed as an argument
+                    if len(args) > 1 and args[1] == "-r":
+                        restart = True
                     self.logger.log_command(self.current_user, command, self.pwd)
                     self.logger.log_system("SESSION_END", f"User {self.current_user} ended the terminal session")
                     print(Fore.RED + "Exiting virtual environment...")
                     break
+
+                elif cmd == "logout":
+                    self.logger.log_command(self.current_user, command, self.pwd)
+                    self.logger.log_system("SESSION_LOGOUT", f"User {self.current_user} logged out")
+                    print(Fore.YELLOW + "Logging out...")
+                    # Return to the login screen
+                    if not self.login():
+                        print(Fore.RED + "Exiting due to authentication failure.")
+                        break
+                    continue
+
                 elif cmd in self.commands_list:
                     self.execute_command(command)
                 else:
                     print(Fore.RED + f"\"{cmd}\" is not recognized as an internal or external command,\noperable program or batch file.")
-                    self.logger.log_command(self.current_user, command_string, self.pwd, False)
+                    self.logger.log_command(self.current_user, command, self.pwd, False)
                     
-            except KeyboardInterrupt:
+            except KeyboardInterrupt:   
                 print("\nUse 'exit' to quit the terminal")
                 self.logger.log_system("KEYBOARD_INTERRUPT", "User interrupted the command input with Ctrl+C")
             except Exception as e:
@@ -598,4 +617,9 @@ def main():
     env.run()
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        if restart:
+            restart = False
+            continue
+        break

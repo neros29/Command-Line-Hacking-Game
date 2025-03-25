@@ -8,6 +8,7 @@ def execute(args, pwd, machine_name):
     # Load the machine's file system
     machine_data = load_machine(machine_name)
     machine = machine_data["file_system"]
+    current_user = machine_data["meta_data"].get("current_user", "system")
 
     """Create a new directory."""
     # Remove any empty arguments
@@ -58,7 +59,7 @@ def execute(args, pwd, machine_name):
         # Add logger after successfully creating a directory
         logger = Logger(machine_name)
         path_str = f"/{'/'.join(path_parts)}"
-        logger.log_file_activity(machine_data["meta_data"]["username"], path_str, "CREATE_DIRECTORY")
+        logger.log_file_activity(current_user, path_str, "CREATE_DIRECTORY")
 
         # Save the updated machine structure back to the JSON file
         machine_file_path = f"src/machines/{machine_name}/{machine_name}.json"

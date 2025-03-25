@@ -17,3 +17,149 @@ Mar 25 04:58:54 local sshd[2978]: pam_unix(sshd:session): session opened for use
 Mar 25 05:02:52 local sshd[1670]: Accepted password for root from 127.0.0.1 port 46958 ssh2
 Mar 25 05:02:52 local sshd[1670]: pam_unix(sshd:session): session opened for user root by (uid=0)
 [2025-03-25 05:02:52] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 05:59:27 local sshd[6804]: Accepted password for root from 127.0.0.1 port 43134 ssh2
+Mar 25 05:59:27 local sshd[6804]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 05:59:27] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:06:37 local sshd[5863]: Accepted password for root from 127.0.0.1 port 46221 ssh2
+Mar 25 06:06:37 local sshd[5863]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:06:37] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:12:17 local sshd[2923]: Accepted password for root from 127.0.0.1 port 46792 ssh2
+Mar 25 06:12:17 local sshd[2923]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:12:17] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:13:57 local sshd[5308]: Accepted password for root from 127.0.0.1 port 30686 ssh2
+Mar 25 06:13:57 local sshd[5308]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:13:57] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:22:29 local sshd[1680]: Accepted password for root from 127.0.0.1 port 49655 ssh2
+Mar 25 06:22:29 local sshd[1680]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:22:29] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:26:01 local sshd[2675]: Accepted password for root from 127.0.0.1 port 57751 ssh2
+Mar 25 06:26:01 local sshd[2675]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:26:01] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:39:34 local sshd[1897]: Accepted password for root from 127.0.0.1 port 54625 ssh2
+Mar 25 06:39:34 local sshd[1897]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:39:34] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:51:17 local sshd[7017]: Accepted password for root from 127.0.0.1 port 52612 ssh2
+Mar 25 06:51:17 local sshd[7017]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:51:17] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:54:48 local sshd[4280]: Accepted password for root from 127.0.0.1 port 34945 ssh2
+Mar 25 06:54:48 local sshd[4280]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:54:48] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 06:57:38 local sshd[7189]: Accepted password for root from 127.0.0.1 port 43642 ssh2
+Mar 25 06:57:38 local sshd[7189]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 06:57:38] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:00:36 local sshd[3632]: Accepted password for root from 127.0.0.1 port 55865 ssh2
+Mar 25 07:00:36 local sshd[3632]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:00:36] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:04:38 local sshd[1215]: Accepted password for root from 127.0.0.1 port 56478 ssh2
+Mar 25 07:04:38 local sshd[1215]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:04:38] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:07:15 local sshd[5707]: Accepted password for root from 127.0.0.1 port 60534 ssh2
+Mar 25 07:07:15 local sshd[5707]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:07:15] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:11:33 local sshd[2350]: Accepted password for root from 127.0.0.1 port 61619 ssh2
+Mar 25 07:11:33 local sshd[2350]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:11:33] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:23:29 local sshd[3292]: Accepted password for root from 127.0.0.1 port 52785 ssh2
+Mar 25 07:23:29 local sshd[3292]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:23:29] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:25:10 local sshd[7404]: Accepted password for user from 127.0.0.1 port 49338 ssh2
+Mar 25 07:25:10 local sshd[7404]: pam_unix(sshd:session): session opened for user user by (uid=0)
+[2025-03-25 07:25:10] LOGIN USER[user] STATUS[SUCCESS]
+Mar 25 07:28:19 local sshd[8646]: Accepted password for root from 127.0.0.1 port 44610 ssh2
+Mar 25 07:28:19 local sshd[8646]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:28:19] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:31:12 local sshd[9141]: Accepted password for root from 127.0.0.1 port 64231 ssh2
+Mar 25 07:31:12 local sshd[9141]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:31:12] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:33:56 local sshd[7285]: Accepted password for root from 127.0.0.1 port 40136 ssh2
+Mar 25 07:33:56 local sshd[7285]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:33:56] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 07:38:38 local sshd[4738]: Accepted password for user from 127.0.0.1 port 60350 ssh2
+Mar 25 07:38:38 local sshd[4738]: pam_unix(sshd:session): session opened for user user by (uid=0)
+[2025-03-25 07:38:38] LOGIN USER[user] STATUS[SUCCESS]
+Mar 25 07:51:54 local sshd[2452]: Accepted password for root from 127.0.0.1 port 40463 ssh2
+Mar 25 07:51:54 local sshd[2452]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 07:51:54] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:10:38 local sshd[3824]: Accepted password for root from 127.0.0.1 port 43412 ssh2
+Mar 25 08:10:38 local sshd[3824]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:10:38] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:14:02 local sshd[8980]: Failed password for root  from 127.0.0.1 port 36246 ssh2
+[2025-03-25 08:14:02] LOGIN USER[root ] STATUS[FAILED]
+Mar 25 08:14:12 local sshd[3320]: Accepted password for root from 127.0.0.1 port 38712 ssh2
+Mar 25 08:14:12 local sshd[3320]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:14:12] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:15:42 local sshd[8481]: Accepted password for root from 127.0.0.1 port 61351 ssh2
+Mar 25 08:15:42 local sshd[8481]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:15:42] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:17:15 local sshd[5300]: Accepted password for root from 127.0.0.1 port 50290 ssh2
+Mar 25 08:17:15 local sshd[5300]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:17:15] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:20:12 local sshd[6644]: Accepted password for root from 127.0.0.1 port 48125 ssh2
+Mar 25 08:20:12 local sshd[6644]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:20:12] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:21:33 local sshd[8838]: Failed password for rot from 127.0.0.1 port 59158 ssh2
+[2025-03-25 08:21:33] LOGIN USER[rot] STATUS[FAILED]
+Mar 25 08:21:36 local sshd[2430]: Accepted password for root from 127.0.0.1 port 60514 ssh2
+Mar 25 08:21:36 local sshd[2430]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:21:36] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:23:51 local sshd[1395]: Accepted password for root from 127.0.0.1 port 32616 ssh2
+Mar 25 08:23:51 local sshd[1395]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:23:51] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:30:32 local sshd[2451]: Accepted password for root from 127.0.0.1 port 36677 ssh2
+Mar 25 08:30:32 local sshd[2451]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:30:32] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:34:50 local sshd[8786]: Failed password for cool from 127.0.0.1 port 48868 ssh2
+Mar 25 08:34:50 local sshd[8786]: Failed password for cool from 127.0.0.1 port 40990 ssh2
+[2025-03-25 08:34:50] LOGIN USER[cool] STATUS[FAILED]
+Mar 25 08:34:53 local sshd[7176]: Accepted password for cool from 127.0.0.1 port 36228 ssh2
+Mar 25 08:34:53 local sshd[7176]: pam_unix(sshd:session): session opened for user cool by (uid=0)
+[2025-03-25 08:34:53] LOGIN USER[cool] STATUS[SUCCESS]
+Mar 25 08:38:13 local sshd[2637]: Failed password for  from 127.0.0.1 port 51025 ssh2
+[2025-03-25 08:38:13] LOGIN USER[] STATUS[FAILED]
+Mar 25 08:38:17 local sshd[9066]: Accepted password for cool from 127.0.0.1 port 56294 ssh2
+Mar 25 08:38:17 local sshd[9066]: pam_unix(sshd:session): session opened for user cool by (uid=0)
+[2025-03-25 08:38:17] LOGIN USER[cool] STATUS[SUCCESS]
+Mar 25 08:40:22 local sshd[9446]: Accepted password for root from 127.0.0.1 port 58997 ssh2
+Mar 25 08:40:22 local sshd[9446]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 08:40:22] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 08:56:57 local sshd[1931]: Accepted password for user from 127.0.0.1 port 35993 ssh2
+Mar 25 08:56:57 local sshd[1931]: pam_unix(sshd:session): session opened for user user by (uid=0)
+[2025-03-25 08:56:57] LOGIN USER[user] STATUS[SUCCESS]
+Mar 25 09:08:47 local sshd[5703]: Failed password for user from 127.0.0.1 port 36236 ssh2
+[2025-03-25 09:08:47] LOGIN USER[user] STATUS[FAILED]
+Mar 25 09:08:53 local sshd[8599]: Accepted password for user from 127.0.0.1 port 31746 ssh2
+Mar 25 09:08:53 local sshd[8599]: pam_unix(sshd:session): session opened for user user by (uid=0)
+[2025-03-25 09:08:53] LOGIN USER[user] STATUS[SUCCESS]
+Mar 25 09:11:11 local sshd[5512]: Accepted password for user from 127.0.0.1 port 35800 ssh2
+Mar 25 09:11:11 local sshd[5512]: pam_unix(sshd:session): session opened for user user by (uid=0)
+[2025-03-25 09:11:11] LOGIN USER[user] STATUS[SUCCESS]
+Mar 25 09:16:32 local sshd[6012]: Accepted password for root from 127.0.0.1 port 33583 ssh2
+Mar 25 09:16:32 local sshd[6012]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:16:32] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:19:27 local sshd[9454]: Accepted password for root from 127.0.0.1 port 42104 ssh2
+Mar 25 09:19:27 local sshd[9454]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:19:27] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:20:21 local sshd[7401]: Accepted password for root from 127.0.0.1 port 59096 ssh2
+Mar 25 09:20:21 local sshd[7401]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:20:21] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:22:06 local sshd[2091]: Accepted password for root from 127.0.0.1 port 51218 ssh2
+Mar 25 09:22:06 local sshd[2091]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:22:06] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:23:43 local sshd[9206]: Accepted password for root from 127.0.0.1 port 58686 ssh2
+Mar 25 09:23:43 local sshd[9206]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:23:43] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:24:41 local sshd[8583]: Accepted password for root from 127.0.0.1 port 60496 ssh2
+Mar 25 09:24:41 local sshd[8583]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:24:41] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:24:51 local sshd[9243]: Accepted password for root from 127.0.0.1 port 58194 ssh2
+Mar 25 09:24:51 local sshd[9243]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:24:51] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:25:35 local sshd[1145]: Accepted password for root from 127.0.0.1 port 47454 ssh2
+Mar 25 09:25:35 local sshd[1145]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:25:35] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:26:50 local sshd[4747]: Accepted password for root from 127.0.0.1 port 62693 ssh2
+Mar 25 09:26:50 local sshd[4747]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:26:50] LOGIN USER[root] STATUS[SUCCESS]
+Mar 25 09:27:17 local sshd[2488]: Accepted password for root from 127.0.0.1 port 60018 ssh2
+Mar 25 09:27:17 local sshd[2488]: pam_unix(sshd:session): session opened for user root by (uid=0)
+[2025-03-25 09:27:17] LOGIN USER[root] STATUS[SUCCESS]

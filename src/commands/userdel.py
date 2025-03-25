@@ -1,11 +1,10 @@
 from colorama import Fore
-from utils.utils import load_machine, save_machine
+from utils.utils import load_machine, save_machine, get_environment
 
 def execute(args, pwd, machine_name):
     """Delete a user from the system"""
-    from src.main import modules
-    
-    env = modules.get("__env__", None)
+    # Use the get_environment utility instead of direct import
+    env = get_environment()
     if not env:
         print(Fore.RED + "Error: Environment not initialized")
         return pwd

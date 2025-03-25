@@ -177,3 +177,28 @@ def check_file_access(path, username, user_data, env):
     
     # All other paths are accessible by default
     return True
+
+def get_environment():
+    """Reliably get the environment object regardless of how the module is imported."""
+    import sys
+    
+    # Method 1: Try to get from __main__ (most reliable when run from main.py)
+    if '__main__' in sys.modules:
+        main_module = sys.modules['__main__']
+        if hasattr(main_module, 'modules'):
+            modules = main_module.modules
+            env = modules.get("__env__", None)
+            if env:
+                return env
+    
+    # Method 2: Try to import from src.main (backup method)
+    try:
+        from src.main import modules
+        env = modules.get("__env__", None)
+        if env:
+            return env
+    except ImportError:
+        pass
+    
+    # If we get here, we couldn't find the environment
+    return None

@@ -7,6 +7,10 @@ from utils.utils import load_machine, save_machine
 def hash_password(password):
     """Hash a password using bcrypt."""
     try:
+        # Reject None passwords
+        if password is None:
+            raise ValueError("Password cannot be None")
+            
         # Ensure password is string
         if isinstance(password, bytes):
             password_bytes = password
@@ -90,24 +94,52 @@ def migrate_passwords(machine_name=None):
             if not isinstance(machine_data, dict):
                 print(f"Warning: Invalid data format for machine {machine}")
                 continue
+            
+            modified = False
                 
+            # 1. Migrate machine-level password
             if "meta_data" in machine_data and "password" in machine_data["meta_data"]:
                 password = machine_data["meta_data"]["password"]
                 
                 # Skip if password is None or empty
-                if not password:
+                if password is None or password == "":
                     print(f"Warning: Empty password for machine {machine}")
-                    continue
-                    
-                # Check if already hashed (bcrypt hashes start with $2)
-                if isinstance(password, str) and not password.startswith('$2'):
-                    # Backup the data before changing
-                    machine_data["meta_data"]["password"] = hash_password(password)
-                    save_machine(machine, machine_data)
-                    print(f"✓ Migrated password for machine: {machine}")
-                    migrated_count += 1
-                else:
-                    print(f"✓ Password for machine {machine} already hashed")
+                # Only hash if not already hashed (not starting with $2)
+                elif not str(password).startswith('$2'):
+                    try:
+                        # Hash the plaintext password
+                        machine_data["meta_data"]["password"] = hash_password(password)
+                        modified = True
+                        print(f"✓ Migrated main password for machine: {machine}")
+                        migrated_count += 1
+                    except Exception as e:
+                        print(f"Error hashing main password for {machine}: {str(e)}")
+            
+            # 2. Migrate user passwords
+            if "meta_data" in machine_data and "users" in machine_data["meta_data"]:
+                users = machine_data["meta_data"]["users"]
+                
+                for username, user_data in users.items():
+                    if "password" in user_data:
+                        user_password = user_data["password"]
+                        
+                        # Skip if password is None or empty
+                        if user_password is None or user_password == "":
+                            continue
+                            
+                        # Check if already hashed
+                        if not str(user_password).startswith('$2'):
+                            try:
+                                users[username]["password"] = hash_password(user_password)
+                                modified = True
+                                print(f"✓ Migrated password for user: {username} on machine: {machine}")
+                                migrated_count += 1
+                            except Exception as e:
+                                print(f"Error hashing password for user {username} on {machine}: {str(e)}")
+            
+            # Save changes if any were made
+            if modified:
+                save_machine(machine, machine_data)
                     
         except FileNotFoundError:
             print(f"Error: Machine '{machine}' not found")

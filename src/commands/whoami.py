@@ -1,10 +1,9 @@
 from colorama import Fore
+from utils.utils import get_environment
 
 def execute(args, pwd, machine_name):
     """Display current username"""
-    from src.main import modules
-    
-    env = modules.get("__env__", None)
+    env = get_environment()
     if not env:
         print(Fore.RED + "Error: Environment not initialized")
         return pwd

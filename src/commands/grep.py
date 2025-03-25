@@ -3,6 +3,7 @@ import os
 import re
 import json
 from utils.utils import load_machine, check_path
+from utils.file_utils import check_file_access,  resolve_path, check_file_exists, navigate_to_path, read_file
 
 def execute(args, pwd, machine_name):
     """Search for patterns in files or piped input."""
@@ -45,6 +46,9 @@ def execute(args, pwd, machine_name):
         print(Fore.RED + f"Invalid regular expression: {pattern}")
         return pwd
     
+    # Create a list to collect all matching lines for piping
+    all_matching_lines = []
+    
     # Handle piped input if present
     if is_piped:
         piped_input = os.environ.get("PIPED_INPUT", "")
@@ -52,7 +56,7 @@ def execute(args, pwd, machine_name):
         
         # Process each line from piped input
         for line_num, line in enumerate(lines, 1):
-            if regex.search(line):
+            if line and regex.search(line):  # Only process non-empty lines
                 output_line = ""
                 
                 # Add line numbers if requested
@@ -66,7 +70,7 @@ def execute(args, pwd, machine_name):
                 if is_pipe_source:
                     # Plain output for piping
                     output_line += line
-                    print(output_line)
+                    all_matching_lines.append(output_line)
                 else:
                     # Highlighted output for display
                     last_end = 0
@@ -80,6 +84,10 @@ def execute(args, pwd, machine_name):
                     
                     highlighted_line += line[last_end:]
                     print(output_line + highlighted_line)
+        
+        # If we're piping output to another command, update PIPED_INPUT
+        if is_pipe_source:
+            os.environ["PIPED_INPUT"] = "\n".join(all_matching_lines)
         
         return pwd
     
@@ -98,25 +106,12 @@ def execute(args, pwd, machine_name):
     matched_files = 0
     total_matches = 0
     
-    def read_file(file_path):
-        """Read a file from the physical path"""
-        try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
-            full_path = os.path.join(project_root, file_path)
-            
-            with open(full_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        except Exception as e:
-            print(Fore.RED + f"Error reading file: {str(e)}")
-            return None
-    
     def search_file(file_path, virtual_file_path):
         nonlocal matched_files, total_matches
         
         try:
-            content = read_file(file_path)
-            if content is None:
+            success, content = read_file(machine_data, file_path.split('/'))
+            if not success:
                 return
             
             lines = content.split('\n')
@@ -173,25 +168,76 @@ def execute(args, pwd, machine_name):
             print(Fore.RED + f"Error processing file {virtual_file_path}: {str(e)}")
     
     def process_path(base_path, virtual_path):
-        # Get the file system node at this path
-        node = check_path(file_system, virtual_path.strip('/').split('/'))
+        path_parts = resolve_path(virtual_path, base_path, file_system)
+        exists, is_directory, node = check_file_exists(file_system, path_parts)
         
-        if node is None:
+        if not exists:
             print(Fore.RED + f"No such file or directory: {virtual_path}")
             return
         
-        if isinstance(node, dict):  # Directory
+        if is_directory:
             if recursive:
-                for name, content in node.items():
-                    new_virtual_path = os.path.join(virtual_path, name).replace('\\', '/')
-                    if isinstance(content, dict):  # Subdirectory
+                # Use navigate_to_path for directory contents
+                success, dir_contents = navigate_to_path(file_system, path_parts)
+                if success:
+                    for name, content in dir_contents.items():
+                        new_virtual_path = os.path.join(virtual_path, name).replace('\\', '/')
                         process_path(base_path, new_virtual_path)
-                    else:  # File
-                        search_file(content, new_virtual_path)
             else:
                 print(Fore.RED + f"{virtual_path} is a directory")
-        else:  # File
-            search_file(node, virtual_path)
+        else:
+            # Use read_file for file content
+            success, content = read_file(machine_data, path_parts)
+            if success:
+                lines = content.split('\n')
+                file_matches = 0
+                
+                for line_num, line in enumerate(lines, 1):
+                    if regex.search(line):
+                        file_matches += 1
+                        total_matches += 1
+                        
+                        output_line = ""
+                        
+                        # If multiple files, show the filename
+                        if len(file_patterns) > 1 or recursive:
+                            if line_numbers:
+                                if is_pipe_source:
+                                    output_line += f"{virtual_path}:{line_num}: "
+                                else:
+                                    output_line += f"{Fore.CYAN}{virtual_path}{Fore.RESET}:{Fore.YELLOW}{line_num}{Fore.RESET}: "
+                            else:
+                                if is_pipe_source:
+                                    output_line += f"{virtual_path}: "
+                                else:
+                                    output_line += f"{Fore.CYAN}{virtual_path}{Fore.RESET}: "
+                        elif line_numbers:
+                            if is_pipe_source:
+                                output_line += f"{line_num}: "
+                            else:
+                                output_line += f"{Fore.YELLOW}{line_num}{Fore.RESET}: "
+                        
+                        # Format the line based on whether we're piping
+                        if is_pipe_source:
+                            # Plain output for piping - but collect instead of print
+                            output_line += line
+                            all_matching_lines.append(output_line)
+                        else:
+                            # Highlighted output for display
+                            last_end = 0
+                            highlighted_line = ""
+                            
+                            for match in regex.finditer(line):
+                                start, end = match.span()
+                                highlighted_line += line[last_end:start]
+                                highlighted_line += f"{Fore.GREEN}{Back.BLACK}{Style.BRIGHT}{line[start:end]}{Style.RESET_ALL}"
+                                last_end = end
+                            
+                            highlighted_line += line[last_end:]
+                            print(output_line + highlighted_line)
+                
+                if file_matches > 0:
+                    matched_files += 1
     
     # Process each file/directory pattern
     for file_pattern in file_patterns:
@@ -207,6 +253,10 @@ def execute(args, pwd, machine_name):
                 virtual_path = pwd + '/' + file_pattern
         
         process_path(pwd, virtual_path)
+    
+    # Update PIPED_INPUT if this command is a pipe source
+    if is_pipe_source:
+        os.environ["PIPED_INPUT"] = "\n".join(all_matching_lines)
     
     # Print summary if multiple files were searched (only if not piping output)
     if (len(file_patterns) > 1 or recursive) and not is_pipe_source:

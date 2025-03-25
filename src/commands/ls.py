@@ -3,23 +3,8 @@ from colorama import Fore
 from src.utils.utils import load_machine
 import os
 
-def execute(args, pwd, machine_name):
-    """List directory contents with support for recursive listing."""
-    machine = load_machine(machine_name)
-    machine = machine["file_system"]
-    
-    # Process options
-    recursive = False
-    target_path = pwd
-    
-    # Parse arguments
-    for i, arg in enumerate(args):
-        if arg == "-r" or arg == "--recursive":
-            recursive = True
-        elif not arg.startswith("-"):
-            target_path = arg
-    
-    # Handle absolute vs relative paths
+def resolve_path(target_path, pwd, machine):
+    """Resolve the target path to its components."""
     if target_path.startswith('/'):
         # Absolute path
         path_parts = [part for part in target_path.split('/') if part]
@@ -33,18 +18,54 @@ def execute(args, pwd, machine_name):
                     path_parts.pop()
             elif part and part != ".":
                 path_parts.append(part)
-                
-    # Navigate to the target directory
+    return path_parts
+
+def navigate_to_path(machine, path_parts):
+    """Navigate to the target directory."""
     current = machine
     for directory in path_parts:
         if isinstance(current, dict) and directory in current:
             current = current[directory]
         else:
-            print(Fore.RED + f"Directory '{target_path}' not found")
-            return pwd
+            return False, None
+    return True, current
+
+def execute(args, pwd, machine_name):
+    """List directory contents with support for recursive listing."""
+    machine = load_machine(machine_name)
+    machine = machine["file_system"]
+    
+    # Process options
+    recursive = False
+    show_hidden = False  # New flag for -a option
+    target_path = pwd
+    
+    # Parse arguments
+    for i, arg in enumerate(args):
+        if arg == "-r" or arg == "--recursive":
+            recursive = True
+        elif arg == "-a" or arg == "--all":
+            show_hidden = True  # Set flag when -a is detected
+        elif not arg.startswith("-"):
+            target_path = arg
+    
+    # Replace path resolution logic with:
+    path_parts = resolve_path(target_path, pwd, machine)
+    
+    # Replace directory navigation with:
+    success, current = navigate_to_path(machine, path_parts)
+    if not success:
+        print(Fore.RED + f"Directory '{target_path}' not found")
+        return pwd
     
     # Check if piping to another command
     is_pipe_source = os.environ.get("IS_PIPE_SOURCE", "0") == "1"
+    
+    # Helper function to filter hidden files
+    def should_display(name):
+        if show_hidden:
+            return True
+        return not name.startswith(".")
     
     # Handle recursive listing
     if recursive:
@@ -56,6 +77,9 @@ def execute(args, pwd, machine_name):
                 return
                 
             for name, content in sorted(dir_content.items()):
+                if not should_display(name):
+                    continue
+                    
                 full_path = f"{current_path}/{name}" if current_path else name
                 
                 if isinstance(content, dict):
@@ -83,8 +107,8 @@ def execute(args, pwd, machine_name):
     else:
         # Standard non-recursive listing
         if isinstance(current, dict):
-            directories = [key for key in current.keys() if isinstance(current[key], dict)]
-            files = [key for key in current.keys() if isinstance(current[key], str)]
+            directories = [key for key in current.keys() if isinstance(current[key], dict) and should_display(key)]
+            files = [key for key in current.keys() if isinstance(current[key], str) and should_display(key)]
             all_items = sorted(directories + files)
             
             if all_items:
@@ -106,3 +130,4 @@ def help():
     print("Usage: ls [options] [directory] - Lists the contents of the specified directory.")
     print("Options:")
     print("  -r, --recursive    List subdirectories recursively")
+    print("  -a, --all          Show hidden files (files starting with .)")

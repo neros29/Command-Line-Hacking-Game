@@ -1,22 +1,34 @@
 from colorama import Fore
+from utils.utils import load_machine
 
 def execute(args, pwd, machine_name):
     """List all users on the system"""
-    from src.main import modules
+    # Instead of getting users from environment, load directly from the machine file
+    machine_data = load_machine(machine_name)
     
-    env = modules.get("__env__", None)
-    if not env:
-        print(Fore.RED + "Error: Environment not initialized")
+    # Get users from freshly loaded machine data
+    users = machine_data.get("meta_data", {}).get("users", {})
+    
+    if not users:
+        print(Fore.YELLOW + "No users found in the system.")
         return pwd
     
-    # Get users from machine data
-    users = env.meta_data.get("users", {})
-    
     usernames = list(users.keys())
-    print(" ".join(usernames))
+    
+    # Enhance the output with formatting and user details (optional)
+    print(Fore.GREEN + "System Users:")
+    print("-------------")
+    for username in sorted(usernames):
+        user_info = users[username]
+        # Add indicators for root/admin users
+        if user_info.get("is_root", False):
+            print(f"{username} (root)")
+        else:
+            print(username)
     
     return pwd
 
 def help():
     print("List all users on the system")
     print("Usage: users")
+    print("Displays all users registered on the current machine")

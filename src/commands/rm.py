@@ -1,91 +1,78 @@
 import os
-from utils.utils import load_machine, check_path
-import json
 from colorama import Fore
-from utils.logger import Logger
+from utils.utils import load_machine, save_machine
+from src.utils.file_utils import resolve_path, check_file_exists, navigate_to_path
 
 def execute(args, pwd, machine_name):
     """Remove a file or directory"""
     # Load the machine's file system
     machine_data = load_machine(machine_name)
     machine = machine_data["file_system"]
+    current_user = machine_data["meta_data"].get("current_user", "system")
 
     # Remove any empty arguments
     args = [part for part in args if part != " "]
     if len(args) == 0:
-        print("Usage: rm [file/directory]")
+        print(Fore.RED + "Usage: rm [file/directory]")
         return pwd
+
+    # Check for recursive flag
+    recursive = False
+    if "-r" in args:
+        recursive = True
+        args.remove("-r")
+        if len(args) == 0:
+            print(Fore.RED + "Usage: rm -r [directory]")
+            return pwd
 
     target = args[0]
-    target_parts = [part for part in target.split("/") if part != ""]
-
-    if target.startswith("/"):
-        # Absolute path
-        path_parts = target_parts
-    else:
-        # Relative path
-        path_parts = pwd.split('/')
-        path_parts = [part for part in path_parts if part != ""]
-        for part in target_parts:
-            if part == "..":
-                if len(path_parts) > 0:
-                    path_parts.pop()
-            else:
-                path_parts.append(part)
-
-    # Check if the target path exists
-    target_path = check_path(machine, path_parts)
     
-    if target_path is None:
-        print("File or directory not found")
+    # Resolve the path
+    path_parts = resolve_path(target, pwd, machine)
+    exists, is_directory, item = check_file_exists(machine, path_parts)
+
+    if not exists:
+        print(Fore.RED + "File or directory not found")
         return pwd
-    else:
-        current = machine
-        # Navigate to the target directory's parent
-        for directory in path_parts[:-1]:
-            if directory == "":
-                continue
-            if isinstance(current, dict) and directory in current:
-                current = current[directory]  # Move into the next directory
-            else:
-                print("Directory not found")
-                return pwd
+    
+    # If it's a directory, check for recursion
+    if is_directory:
+        if not recursive and len(item) > 0:
+            print(Fore.RED + "Cannot remove directory: Directory not empty (use -r for recursive removal)")
+            return pwd
+    
+    # Navigate to the parent directory
+    parent_path_parts = path_parts[:-1]
+    success, parent_dir = navigate_to_path(machine, parent_path_parts)
+    
+    if not success:
+        print(Fore.RED + "Parent directory not found")
+        return pwd
+    
+    # Remove the item
+    filename = path_parts[-1]
+    if filename in parent_dir:
+        # If it's a file, delete the physical file if it exists
+        if not is_directory:
+            file_path = parent_dir[filename]
+            if isinstance(file_path, str) and file_path != "command":
+                try:
+                    current_dir = os.path.dirname(os.path.abspath(__file__))
+                    project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+                    full_path = os.path.join(project_root, file_path)
+                    if os.path.exists(full_path):
+                        os.remove(full_path)
+                except Exception as e:
+                    print(Fore.YELLOW + f"Warning: Could not delete physical file: {str(e)}")
         
-        # Remove the file or directory
-        if isinstance(current[path_parts[-1]], dict):
-            # It's a directory
-            if current[path_parts[-1]]:
-                print("Directory is not empty")
-                return pwd
-            else:
-                del current[path_parts[-1]]
-                logger = Logger(machine_name)
-                path_str = f"/{'/'.join(path_parts)}"
-                logger.log_file_activity(machine_data["meta_data"]["username"], path_str, "DELETE")
-        else:
-            # It's a file
-            file_path = current[path_parts[-1]]
-            del current[path_parts[-1]]
-            # Delete the actual file from the filesystem
-            try:
-                os.remove(file_path)
-                logger = Logger(machine_name)
-                path_str = f"/{'/'.join(path_parts)}"
-                logger.log_file_activity(machine_data["meta_data"]["username"], path_str, "DELETE")
-            except FileNotFoundError:
-                print("File not found")
-                return pwd
-            except Exception as e:
-                print(f"An error occurred: {e}")
-                return pwd
-
-        # Save the updated machine structure back to the JSON file
-        machine_file_path = f"src/machines/{machine_name}/{machine_name}.json"
-        with open(machine_file_path, "w") as machine_file:
-            machine_data["file_system"] = machine
-            json.dump(machine_data, machine_file, indent=4)
-
-        return pwd
+        # Remove from the file system
+        del parent_dir[filename]
+        
+        # Save the updated file system
+        save_machine(machine_name, machine_data)
+    
+    return pwd
 
 def help():
-    print("Usage: rm [file/directory] Removes the specified file or directory.")
+    print("Usage: rm [file] - Removes a file")
+    print("       rm -r [directory] - Removes a directory and its contents")

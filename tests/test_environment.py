@@ -8,6 +8,9 @@ from unittest.mock import patch
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.main import HackingEnvironment
+from src.utils.utils import load_machine, save_machine  # or from src.utils.file_utils if moved
+from src.utils.file_utils import resolve_path, check_file_access
+
 from test_utils import FileSystemTestFixture
 
 class TestEnvironment(unittest.TestCase):

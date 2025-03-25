@@ -118,8 +118,28 @@ class TestPasswordManager(unittest.TestCase):
                 if "machines" in path:
                     return self.test_dir
                 return original_dir(path)
-            
             pm.os.path.abspath = mock_abspath
+            
+            # Also patch the load_machine and save_machine functions
+            original_load = pm.load_machine
+            original_save = pm.save_machine
+            
+            def mock_load_machine(machine_name):
+                if machine_name == self.machine_name:
+                    return self.machine_data
+                return original_load(machine_name)
+                
+            def mock_save_machine(machine_name, data):
+                if machine_name == self.machine_name:
+                    self.machine_data = data
+                    # Also save to file for verification
+                    with open(self.machine_file, 'w') as f:
+                        json.dump(data, f)
+                    return True
+                return original_save(machine_name, data)
+                
+            pm.load_machine = mock_load_machine
+            pm.save_machine = mock_save_machine
             
             # Run migration
             migrate_passwords(self.machine_name)
@@ -143,5 +163,9 @@ class TestPasswordManager(unittest.TestCase):
             self.assertTrue(verify_password("user1_password", user1_pass))
         
         finally:
-            # Restore original function
+            # Restore original functions
             pm.os.path.abspath = original_dir
+            if hasattr(pm, 'load_machine'):
+                pm.load_machine = original_load
+            if hasattr(pm, 'save_machine'):
+                pm.save_machine = original_save

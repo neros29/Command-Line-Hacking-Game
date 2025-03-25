@@ -55,12 +55,18 @@
                 "Pictures": {},
                 "Downloads": {},
                 "Videos": {}
-            },
-            "cool.txt": "src/machines/local/files/home__DIR__cool.txt",
-            "test_file.txt": "src/machines/local/files/home__DIR__test_file.txt"
+            }
         },
         "root": {
-            "cool.txt": "src/machines/local/files/root__DIR__cool.txt"
+            "Desktop": {
+                "nmap_scan_10.10.10.10.txt": "src/machines/local/files/root__DIR__Desktop__DIR__nmap_scan_10.10.10.10.txt"
+            },
+            "Documents": {
+                "cool.txt": "src/machines/local/files/root__DIR__Documents__DIR__cool.txt"
+            },
+            "Pictures": {},
+            "Downloads": {},
+            "Videos": {}
         },
         "bin": {
             "ls": "command",
@@ -87,12 +93,12 @@
             "users": "command",
             "whoami": "command",
             "groups": "command",
-            "cool": {}
+            "sudo": "command"
         },
         "var": {
             "log": {
                 "system.log": "src/machines/local/logs/system_2025-03-25.log",
-                "files.log": "src/machines/local/logs/files_2025-03-24.log",
+                "files.log": "src/machines/local/logs/files_2025-03-25.log",
                 "commands.log": "src/machines/local/logs/commands_2025-03-25.log",
                 "network.log": "src/machines/local/logs/network_2025-03-25.log",
                 "auth.log": "src/machines/local/logs/auth_2025-03-25.log"

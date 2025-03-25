@@ -1,9 +1,10 @@
 import os
 import curses
 from colorama import Fore, Style
-from utils.utils import load_machine, check_path
+from utils.utils import load_machine
 import json
 from utils.logger import Logger
+from src.utils.file_utils import resolve_path, write_to_file, check_file_exists, read_file
 
 def execute(args, pwd, machine_name):
     """Implements a simple nano-like text editor"""
@@ -11,99 +12,57 @@ def execute(args, pwd, machine_name):
         print(Fore.RED + "Usage: nano [file]")
         return pwd
 
-    file_name = args[0]
+    file_path = args[0]
     machine_data = load_machine(machine_name)
     file_system = machine_data["file_system"]
+    current_user = machine_data["meta_data"].get("current_user", "system")
     
-    # Determine if file path is absolute or relative
-    if file_name.startswith('/'):
-        # Absolute path
-        path_parts = [part for part in file_name.split('/') if part != ""]
-        working_path = '/' + '/'.join(path_parts[:-1]) if len(path_parts) > 1 else '/'
-        file_name = path_parts[-1] if path_parts else ""
-    else:
-        # Relative path
-        path_parts = [part for part in pwd.split('/') if part != ""]
-        working_path = pwd
+    # Resolve the file path
+    path_parts = resolve_path(file_path, pwd, file_system)
+    if not path_parts:
+        print(Fore.RED + "Invalid file path")
+        return pwd
     
-    # Get current directory in file system
+    filename = path_parts[-1]
+    parent_path = path_parts[:-1]
+    
+    # Navigate to the parent directory
     current = file_system
-    for directory in path_parts:
-        if directory == "":
-            continue
+    for directory in parent_path:
         if isinstance(current, dict) and directory in current:
             current = current[directory]
         else:
-            print(Fore.RED + f"Directory {directory} not found")
+            print(Fore.RED + f"Directory {'/'.join(parent_path)} not found")
             return pwd
     
-    file_content = ""
-    is_new_file = False
-    
-    # Check if file exists
-    if file_name in current:
-        if isinstance(current[file_name], str):
-            # It's a file path
-            try:
-                file_path = current[file_name]
-                with open(file_path, 'r') as f:
-                    file_content = f.read()
-            except FileNotFoundError:
-                print(Fore.YELLOW + f"New file: {file_name}")
-                is_new_file = True
-        else:
-            print(Fore.RED + f"{file_name} is a directory")
-            return pwd
-    else:
-        print(Fore.YELLOW + f"New file: {file_name}")
-        is_new_file = True
+    path_parts = resolve_path(file_path, pwd, machine_data["file_system"])
+    exists, is_directory, item = check_file_exists(machine_data["file_system"], path_parts)
+
+    if exists and is_directory:
+        print(Fore.RED + f"{file_path} is a directory")
+        return pwd
+        
+    initial_content = ""
+    if exists:
+        success, content = read_file(machine_data, path_parts)
+        if success:
+            initial_content = content
     
     # Initialize curses for text editing
-    edited_content = run_editor(file_content)
+    edited_content = run_editor(initial_content)
     
     if edited_content is None:  # User canceled editing
         return pwd
     
-    # Save file
-    try:
-        # Create physical file with better path handling
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
-        os_path = os.path.join(project_root, "src", "machines", machine_name, "files")
-        os.makedirs(os_path, exist_ok=True)
-        
-        def path_to_safe_filename(virtual_path, filename):
-            """Convert a virtual path to a safe physical filename"""
-            # Replace slashes with double underscores to create a unique filename
-            path_encoded = virtual_path.replace('/', '__DIR__').replace('\\', '__DIR__')
-            # Remove the leading __DIR__ if it exists
-            if path_encoded.startswith('__DIR__'):
-                path_encoded = path_encoded[7:]
-            # Handle empty path
-            if not path_encoded:
-                return filename
-            return f"{path_encoded}__DIR__{filename}"
-        
-        # Create the physical file path with the directory-encoded filename
-        safe_filename = path_to_safe_filename(working_path, file_name)
-        real_file_path = os.path.join(os_path, safe_filename)
-        
-        with open(real_file_path, 'w') as f:
-            f.write(edited_content)
-        
-        # Use a relative path in the virtual file system for better portability
-        current[file_name] = f"src/machines/{machine_name}/files/{safe_filename}"
-        
-        # Save machine data
-        machine_file_path = os.path.join(project_root, "src", "machines", machine_name, f"{machine_name}.json")
-        with open(machine_file_path, 'w') as f:
-            json.dump(machine_data, f, indent=4)
-        
-        print(Fore.GREEN + f"File {file_name} saved")
+    # Write the file using the shared utility
+    working_path = '/' + '/'.join(parent_path) if parent_path else '/'
+    if write_to_file(machine_data, path_parts, edited_content):
+        print(Fore.GREEN + f"Saved {file_path}")
+        # Log the file activity
         logger = Logger(machine_name)
-        logger.log_file_activity(machine_data["meta_data"]["username"], f"{working_path}/{file_name}", "EDIT")
-    except Exception as e:
-        print(Fore.RED + f"Error saving file: {str(e)}")
+        logger.log_file_activity(current_user, f"{working_path}/{filename}", "EDIT")
+    else:
+        print(Fore.RED + f"Failed to save {file_path}")
     
     return pwd
 

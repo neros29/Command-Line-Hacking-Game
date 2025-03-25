@@ -2,13 +2,19 @@ from colorama import Fore
 import os
 import importlib
 import sys
+from src.utils.utils import get_environment
 
 def execute(args, pwd, machine_name):
     """Reload all command modules to test changes without restarting."""
     try:
         # Get reference to the main HackingEnvironment instance
         import src.main as main
-        env = main.sys.modules['__main__'].env  # Access the environment instance
+        
+        # Use the utility function instead of direct access
+        env = get_environment()
+        if not env:
+            print(Fore.RED + "Error: Could not access the environment instance")
+            return pwd
         
         # Get the commands directory
         current_dir = os.path.dirname(os.path.abspath(__file__))

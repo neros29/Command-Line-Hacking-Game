@@ -1,6 +1,6 @@
 from colorama import Fore
 from utils.utils import load_machine, check_path
-
+from utils.file_utils import resolve_path, read_file
 def execute(args, pwd, machine_name):
     """View system logs with options for recent entries only"""
     machine_data = load_machine(machine_name)
@@ -36,27 +36,23 @@ def execute(args, pwd, machine_name):
     if "var" in machine_data["file_system"] and "log" in machine_data["file_system"]["var"]:
         logs = machine_data["file_system"]["var"]["log"]
         if log_name in logs:
-            log_path = logs[log_name]
+            log_path_parts = resolve_path(f"/var/log/{log_name}.log", pwd, machine_data["file_system"])
+            success, log_content = read_file(machine_data, log_path_parts)
+
+            if not success:
+                print(Fore.RED + f"Error reading log file: {log_content}")
+                return pwd
             
-            # Read and display the log
-            try:
-                with open(log_path, "r") as f:
-                    log_content = f.readlines()
-                    
-                print(Fore.CYAN + f"=== Log: {log_name} (showing last {view_lines} entries) ===")
+            print(Fore.CYAN + f"=== Log: {log_name} (showing last {view_lines} entries) ===")
+            
+            # Show only the last N lines
+            for line in log_content[-view_lines:]:
+                print(Fore.GREEN + line.strip())
                 
-                # Show only the last N lines
-                for line in log_content[-view_lines:]:
-                    print(Fore.GREEN + line.strip())
+            if len(log_content) > view_lines:
+                print(Fore.YELLOW + f"\n[...{len(log_content) - view_lines} more entries not shown...]")
+                print(Fore.YELLOW + f"Use 'logs {log_name} -n {len(log_content)}' to see all entries")
                     
-                if len(log_content) > view_lines:
-                    print(Fore.YELLOW + f"\n[...{len(log_content) - view_lines} more entries not shown...]")
-                    print(Fore.YELLOW + f"Use 'logs {log_name} -n {len(log_content)}' to see all entries")
-                    
-            except FileNotFoundError:
-                print(Fore.RED + f"Log file not found: {log_path}")
-            except Exception as e:
-                print(Fore.RED + f"Error reading log: {str(e)}")
         else:
             print(Fore.RED + f"Log file not found: {log_name}")
     else:

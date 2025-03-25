@@ -1,13 +1,11 @@
 import getpass
 from colorama import Fore
 from utils.password_manager import hash_password
-from utils.utils import load_machine, save_machine
+from utils.utils import load_machine, save_machine, get_environment
 
 def execute(args, pwd, machine_name):
     """Add a new user to the system"""
-    from src.main import modules
-    
-    env = modules.get("__env__", None)
+    env = get_environment()
     if not env:
         print(Fore.RED + "Error: Environment not initialized")
         return pwd

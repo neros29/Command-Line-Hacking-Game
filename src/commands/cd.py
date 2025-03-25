@@ -1,5 +1,6 @@
 from colorama import Fore
 from src.utils.utils import load_machine, check_path
+from src.utils.file_utils import resolve_path, check_file_exists
 
 def execute(args, pwd, machine_name):
     machine = load_machine(machine_name)
@@ -35,17 +36,18 @@ def execute(args, pwd, machine_name):
     if not path_parts:
         return "/"
         
-    target_path = check_path(machine, path_parts)
-    
-    if target_path is not None:
-        if isinstance(target_path, dict):  # Check if the target path is a directory
-            return "/" + "/".join(path_parts)
-        else:
-            print(Fore.RED + f"{new_dir} is not a directory")
-            return pwd
-    else:
+    path_parts = resolve_path(new_dir, pwd, machine)
+    exists, is_directory, item = check_file_exists(machine, path_parts)
+
+    if not exists:
         print(Fore.RED + f"Directory {new_dir} not found")
         return pwd
+        
+    if not is_directory:
+        print(Fore.RED + f"{new_dir} is not a directory")
+        return pwd
+
+    return "/" + "/".join(path_parts) if path_parts else "/"
 
 def help():
     print("Usage: cd [directory] Changes the current directory to the specified directory.")

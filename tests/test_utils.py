@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 import tempfile
+import re
 
 class FileSystemTestFixture:
     """Test fixture that preserves and restores file system state between tests."""
@@ -58,3 +59,16 @@ class FileSystemTestFixture:
                     shutil.rmtree(self.backup_dir)
                 except:
                     pass
+
+def strip_ansi_codes(text):
+    """
+    Remove ANSI escape sequences (color codes) from a string.
+    
+    Args:
+        text (str): Text containing ANSI escape sequences
+        
+    Returns:
+        str: Clean text without ANSI codes
+    """
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)

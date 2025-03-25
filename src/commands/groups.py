@@ -1,10 +1,9 @@
 from colorama import Fore
+from utils.utils import get_environment
 
 def execute(args, pwd, machine_name):
     """Display groups for a user"""
-    from src.main import modules
-    
-    env = modules.get("__env__", None)
+    env = get_environment()
     if not env:
         print(Fore.RED + "Error: Environment not initialized")
         return pwd
@@ -31,6 +30,5 @@ def execute(args, pwd, machine_name):
     return pwd
 
 def help():
-    print("Display group membership for a user")
+    print("Display groups for a user")
     print("Usage: groups [username]")
-    print("If no username is provided, displays groups for the current user")

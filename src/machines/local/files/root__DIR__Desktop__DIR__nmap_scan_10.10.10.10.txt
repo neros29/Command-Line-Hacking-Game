@@ -1,0 +1,12 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2025-03-25 08:30:59
+Nmap scan report for 10.10.10.10
+Host is up (0.000s latency).
+PORT      STATE    SERVICE
+----------------------------------------
+50/tcp   open     unknown service
+80/tcp   open     Hypertext Transfer Protocol (HTTP) for web traffic
+443/tcp   open     Hypertext Transfer Protocol Secure (HTTPS) for encrypted web traffic
+162/tcp   open     Used by SNMP for sending notifications and traps to network management systems
+
+Nmap done: 1 IP address (1 host up) scanned in 5.02 seconds.
+Scan complete.
