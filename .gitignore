@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.myenv/
+
+# Game-specific files
+src/virtual_system/__pycache__/
+src/utils/__pycache__/
+src/machines/__pycache__/
+src/commands/__pycache__/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS specific files
+.DS_Store
+Thumbs.db

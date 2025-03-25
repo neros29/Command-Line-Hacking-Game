@@ -1,0 +1,131 @@
+{
+    "ports": [
+      {
+        "port": 20,
+        "name": "FTP Data Transfer",
+        "protocol": "TCP",
+        "use_case": "File Transfer Protocol (FTP) data transfer"
+      },
+      {
+        "port": 21,
+        "name": "FTP Control",
+        "protocol": "TCP",
+        "use_case": "File Transfer Protocol (FTP) control commands"
+      },
+      {
+        "port": 22,
+        "name": "SSH",
+        "protocol": "TCP",
+        "use_case": "Secure Shell (SSH) for secure remote login"
+      },
+      {
+        "port": 23,
+        "name": "Telnet",
+        "protocol": "TCP",
+        "use_case": "Telnet for unencrypted remote login"
+      },
+      {
+        "port": 25,
+        "name": "SMTP",
+        "protocol": "TCP",
+        "use_case": "Simple Mail Transfer Protocol (SMTP) for email transmission"
+      },
+      {
+        "port": 53,
+        "name": "DNS",
+        "protocol": "UDP",
+        "use_case": "Domain Name System (DNS) for resolving domain names to IP addresses"
+      },
+      {
+        "port": 80,
+        "name": "HTTP",
+        "protocol": "TCP",
+        "use_case": "Hypertext Transfer Protocol (HTTP) for web traffic"
+      },
+      {
+        "port": 110,
+        "name": "POP3",
+        "protocol": "TCP",
+        "use_case": "Post Office Protocol version 3 (POP3) for retrieving email from servers"
+      },
+      {
+        "port": 143,
+        "name": "IMAP",
+        "protocol": "TCP",
+        "use_case": "Internet Message Access Protocol (IMAP) for retrieving and managing emails"
+      },
+      {
+        "port": 443,
+        "name": "HTTPS",
+        "protocol": "TCP",
+        "use_case": "Hypertext Transfer Protocol Secure (HTTPS) for encrypted web traffic"
+      },
+      {
+        "port": 445,
+        "name": "SMB",
+        "protocol": "TCP",
+        "use_case": "Server Message Block (SMB) for file and printer sharing"
+      },
+      {
+        "port": 3389,
+        "name": "RDP",
+        "protocol": "TCP",
+        "use_case": "Remote Desktop Protocol (RDP) for remote desktop access"
+      },
+      {
+        "port": 8080,
+        "name": "HTTP Alternate",
+        "protocol": "TCP",
+        "use_case": "Alternative port for HTTP traffic, commonly used by proxy servers and web services"
+      },
+      {
+        "port": 3306,
+        "name": "MySQL",
+        "protocol": "TCP",
+        "use_case": "MySQL database server communication"
+      },
+      {
+        "port": 5432,
+        "name": "PostgreSQL",
+        "protocol": "TCP",
+        "use_case": "PostgreSQL database server communication"
+      },
+      {
+        "port": 6379,
+        "name": "Redis",
+        "protocol": "TCP",
+        "use_case": "Redis in-memory data store communication"
+      },
+      {
+        "port": 27017,
+        "name": "MongoDB",
+        "protocol": "TCP",
+        "use_case": "MongoDB NoSQL database server communication"
+      },
+      {
+        "port": 5000,
+        "name": "Flask Development Server",
+        "protocol": "TCP",
+        "use_case": "Default port for the Flask web application framework (used during development)"
+      },
+      {
+        "port": 54321,
+        "name": "Custom Services",
+        "protocol": "TCP",
+        "use_case": "Custom applications or services that require dynamic port usage"
+      },
+      {
+        "port": 161,
+        "name": "SNMP",
+        "protocol": "UDP",
+        "use_case": "Simple Network Management Protocol (SNMP) for network monitoring and management"
+      },
+      {
+        "port": 162,
+        "name": "SNMP Trap",
+        "protocol": "UDP",
+        "use_case": "Used by SNMP for sending notifications and traps to network management systems"
+      }
+    ]
+  }
+  

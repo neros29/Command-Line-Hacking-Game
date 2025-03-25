@@ -1,0 +1,102 @@
+{
+    "meta_data": {
+        "name": "local",
+        "users": {
+            "root": {
+                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "home": "/root",
+                "shell": "/bin/bash",
+                "group": "root",
+                "is_root": true,
+                "uid": 0,
+                "gid": 0,
+                "permissions": [
+                    "all"
+                ]
+            },
+            "user": {
+                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "home": "/home/user",
+                "shell": "/bin/bash",
+                "group": "users",
+                "is_root": false,
+                "uid": 1000,
+                "gid": 1000,
+                "permissions": [
+                    "home",
+                    "public"
+                ]
+            },
+            "dan": {
+                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "home": "/home/dan",
+                "shell": "/bin/bash",
+                "group": "staff",
+                "is_root": false,
+                "uid": 1001,
+                "gid": 1001,
+                "permissions": [
+                    "home",
+                    "public",
+                    "var"
+                ]
+            }
+        },
+        "ip": "169.254.168.233",
+        "ports": [
+            22
+        ]
+    },
+    "file_system": {
+        "home": {
+            "user": {
+                "Desktop": {},
+                "Documents": {},
+                "Pictures": {},
+                "Downloads": {},
+                "Videos": {}
+            },
+            "cool.txt": "src/machines/local/files/home__DIR__cool.txt",
+            "test_file.txt": "src/machines/local/files/home__DIR__test_file.txt"
+        },
+        "root": {
+            "cool.txt": "src/machines/local/files/root__DIR__cool.txt"
+        },
+        "bin": {
+            "ls": "command",
+            "cd": "command",
+            "mkdir": "command",
+            "nmap": "command",
+            "rm": "command",
+            "cat": "command",
+            "nano": "command",
+            "clear": "command",
+            "help": "command",
+            "touch": "command",
+            "logs": "command",
+            "mv": "command",
+            "reload": "command",
+            "grep": "command",
+            "echo": "command",
+            "ssh": "command",
+            "passwd": "command",
+            "user": "command",
+            "useradd": "command",
+            "userdel": "command",
+            "usermod": "command",
+            "users": "command",
+            "whoami": "command",
+            "groups": "command",
+            "cool": {}
+        },
+        "var": {
+            "log": {
+                "system.log": "src/machines/local/logs/system_2025-03-25.log",
+                "files.log": "src/machines/local/logs/files_2025-03-24.log",
+                "commands.log": "src/machines/local/logs/commands_2025-03-25.log",
+                "network.log": "src/machines/local/logs/network_2025-03-25.log",
+                "auth.log": "src/machines/local/logs/auth_2025-03-25.log"
+            }
+        }
+    }
+}

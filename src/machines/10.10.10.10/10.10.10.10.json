@@ -1,0 +1,48 @@
+{
+    "meta_data": {
+        "name": "target-server",
+        "username": "admin",
+        "password": "$2b$12$Nsv0emCIgHyLZrZPkPXJYu6E42sDtajBa/QmKq/bHI57v7UcWQj8i",
+        "ip": "10.10.10.10",
+        "ports": [
+            50,
+            80,
+            443,
+            162
+        ]
+    },
+    "file_system": {
+        "home": {
+            "user": {
+                "Desktop": {
+                    "cool": {}
+                },
+                "Documents": {},
+                "Pictures": {},
+                "Downloads": {},
+                "Videos": {},
+                "cool": {}
+            }
+        },
+        "root": {
+            "Desktop": {},
+            "Documents": {},
+            "Pictures": {},
+            "Downloads": {},
+            "Videos": {}
+        },
+        "temp": {},
+        "var": {
+            "log": {
+                "network.log": "src/machines/10.10.10.10/logs/network_2025-03-25.log"
+            }
+        },
+        "bin": {
+            "ls": "command",
+            "cd": "command",
+            "mkdir": "command",
+            "cat": "command",
+            "logs": "command"
+        }
+    }
+}
