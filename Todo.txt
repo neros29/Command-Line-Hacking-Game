@@ -1,2 +1,0 @@
-figure out the security damen for fire wall stuff
-fix grep multy like this ls | grep txt | grep test

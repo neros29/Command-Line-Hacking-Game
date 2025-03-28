@@ -39,6 +39,21 @@ def parse_arguments():
     parser.add_argument("--machine", type=str, default="local", help="Specify the machine name to start with")
     return parser.parse_args()
 
+def check_platform_compatibility():
+    """Check platform compatibility and print warnings if needed."""
+    system = platform.system()
+    
+    if system == "Windows":
+        # Check if windows-curses is installed for the nano editor
+        try:
+            import windows_curses
+        except ImportError:
+            print(Fore.YELLOW + "Warning: windows-curses not found. The nano editor may not work correctly.")
+            print(Fore.YELLOW + "Install it with: pip install windows-curses")
+    
+    # For Linux and Mac, curses is part of the standard library
+    return True
+
 class HackingEnvironment:
     def __init__(self, machine_name="local"):
         # Initialize variables
@@ -605,6 +620,8 @@ class HackingEnvironment:
 
 # Start the game
 def main():
+    """Run the Terminal Hacking Game."""
+    check_platform_compatibility()
     arguments = parse_arguments()
     
     env = HackingEnvironment(machine_name=arguments.machine)

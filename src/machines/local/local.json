@@ -3,7 +3,7 @@
         "name": "local",
         "users": {
             "root": {
-                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "password": "$2b$12$6jscl4fjJWN7jNr4.h0sPuYL26ntJo5hhAFYSwIebfz0lTATipOI.",
                 "home": "/root",
                 "shell": "/bin/bash",
                 "group": "root",
@@ -15,7 +15,7 @@
                 ]
             },
             "user": {
-                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "password": "$2b$12$.YL/HSoPBXSbpQSl9/HoUeA.DQwxC7xbnPLqynNFeiOjRLxopxGha",
                 "home": "/home/user",
                 "shell": "/bin/bash",
                 "group": "users",
@@ -28,7 +28,7 @@
                 ]
             },
             "dan": {
-                "password": "$2b$12$WsVM6K9eFZN0u8xrHmvM/e4Ke3R7g4I0z0iSnAD52RG6jV4P6j8b6",
+                "password": "$2b$12$.YL/HSoPBXSbpQSl9/HoUeA.DQwxC7xbnPLqynNFeiOjRLxopxGha",
                 "home": "/home/dan",
                 "shell": "/bin/bash",
                 "group": "staff",
@@ -97,11 +97,11 @@
         },
         "var": {
             "log": {
-                "system.log": "src/machines/local/logs/system_2025-03-25.log",
+                "system.log": "src/machines/local/logs/system_2025-03-28.log",
                 "files.log": "src/machines/local/logs/files_2025-03-25.log",
-                "commands.log": "src/machines/local/logs/commands_2025-03-25.log",
-                "network.log": "src/machines/local/logs/network_2025-03-25.log",
-                "auth.log": "src/machines/local/logs/auth_2025-03-25.log"
+                "commands.log": "src/machines/local/logs/commands_2025-03-28.log",
+                "network.log": "src/machines/local/logs/network_2025-03-28.log",
+                "auth.log": "src/machines/local/logs/auth_2025-03-28.log"
             }
         }
     }

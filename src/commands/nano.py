@@ -1,15 +1,33 @@
 import os
-import curses
+import sys
 from colorama import Fore, Style
 from utils.utils import load_machine
 import json
 from utils.logger import Logger
 from src.utils.file_utils import resolve_path, write_to_file, check_file_exists, read_file
 
+# Platform-specific curses import
+try:
+    import curses
+except ImportError:
+    # On Windows, try to import windows-curses
+    try:
+        import windows_curses as curses
+    except ImportError:
+        curses = None
+        print(Fore.RED + "Warning: Curses module not available. Text editor functionality will be limited.")
+
 def execute(args, pwd, machine_name):
     """Implements a simple nano-like text editor"""
     if len(args) < 1:
         print(Fore.RED + "Usage: nano [file]")
+        return pwd
+
+    # Check if curses is available
+    if curses is None:
+        print(Fore.RED + "The nano editor requires the curses module which is not available.")
+        print(Fore.YELLOW + "On Windows: pip install windows-curses")
+        print(Fore.YELLOW + "On Linux/Mac: curses should be available by default")
         return pwd
 
     file_path = args[0]

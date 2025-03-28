@@ -3,19 +3,54 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# C extensions
+*.so
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
 # Virtual environment
 .myenv/
+venv/
+env/
+ENV/
 
-# Game-specific files
-src/virtual_system/__pycache__/
-src/utils/__pycache__/
-src/machines/__pycache__/
-src/commands/__pycache__/
+# Game-specific files and data
+*.log
+*.save
+*.dat
+*.db
+save_data/
 
-# IDE files
+# IDE and editor files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
 
 # OS specific files
 .DS_Store
 Thumbs.db
+desktop.ini
+*.lnk
+
+# Test and coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Environments
+.env
+.venv
+
+# user specific files
+.setup_complete

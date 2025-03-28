@@ -2,13 +2,14 @@
     "meta_data": {
         "name": "target-server",
         "username": "admin",
-        "password": "$2b$12$Nsv0emCIgHyLZrZPkPXJYu6E42sDtajBa/QmKq/bHI57v7UcWQj8i",
+        "password": "$2b$12$.YL/HSoPBXSbpQSl9/HoUeA.DQwxC7xbnPLqynNFeiOjRLxopxGha",
         "ip": "10.10.10.10",
         "ports": [
             50,
             80,
             443,
-            162
+            162,
+            22
         ]
     },
     "file_system": {
@@ -34,7 +35,7 @@
         "temp": {},
         "var": {
             "log": {
-                "network.log": "src/machines/10.10.10.10/logs/network_2025-03-25.log"
+                "network.log": "src/machines/10.10.10.10/logs/network_2025-03-28.log"
             }
         },
         "bin": {
